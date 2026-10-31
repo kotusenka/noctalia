@@ -1233,6 +1233,13 @@ void WindowSwitcher::syncSelection(bool animate) {
 
   const ShellConfig::WindowSwitcherConfig switcherConfig =
       m_config != nullptr ? m_config->config().shell.windowSwitcher : ShellConfig::WindowSwitcherConfig{};
+  if (m_instance->captionLabel != nullptr) {
+    const std::string title = m_windows.empty()
+        ? std::string{}
+        : (m_windows[m_selectedIndex].title.empty() ? m_windows[m_selectedIndex].appLabel
+                                                    : m_windows[m_selectedIndex].title);
+    m_instance->captionLabel->setText(title);
+  }
   if (m_instance->surface->width() > 0 && m_instance->surface->height() > 0) {
     m_instance->styleLayout = computeSwitcherLayout(
         static_cast<float>(m_instance->surface->width()), static_cast<float>(m_instance->surface->height()),
@@ -1349,16 +1356,6 @@ void WindowSwitcher::syncSelection(bool animate) {
     } else {
       m_instance->counterLabel->setText(std::to_string(m_selectedIndex + 1) + " / " + std::to_string(m_windows.size()));
     }
-  }
-  if (m_instance->captionLabel != nullptr) {
-    const std::string title = m_windows.empty()
-        ? std::string{}
-        : (m_windows[m_selectedIndex].title.empty() ? m_windows[m_selectedIndex].appLabel
-                                                    : m_windows[m_selectedIndex].title);
-    m_instance->captionLabel->setText(title);
-    positionPanel(
-        *m_instance, static_cast<float>(m_instance->surface->width()), static_cast<float>(m_instance->surface->height())
-    );
   }
 
   if (!animate || transitions.empty()) {
